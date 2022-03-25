@@ -1,0 +1,52 @@
+on:
+  push:
+  workflow_dispatch:
+  
+env:
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
+  OWNER: jcansdale-test-myorg
+  REPOSITORY_NAME: addProjectNextItem
+  PROJECT_ID: FOO
+  CONTENT_ID: BAR
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+                
+      - name: List projects
+        run: |
+          gh api graphql \
+            -f query='{
+              organization(login: "${{ env.OWNER }}") {
+                projectsNext(first: 100) {
+                  nodes {
+                    title id 
+                  }      
+                }
+              }
+            }' | jq
+      - name: List issues
+        run: |
+          gh api graphql \
+            -f query='{
+              repository(owner: "${{ env.OWNER }}", name: "${{ env.REPOSITORY_NAME }}") {
+                issues(first: 100) {
+                  nodes {
+                    title id 
+                  }
+                }
+              }
+            }' | jq
+      - name: Add item
+        run: |
+          gh api graphql \
+            -f query='mutation {
+              addProjectNextItem(input: { projectId: "${{ env.PROJECT_ID }}", contentId: "${{ env.CONTENT_ID }}" }) {
+                projectNextItem {
+                  id
+                }
+              }
+            }' | jq
