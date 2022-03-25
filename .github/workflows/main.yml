@@ -6,6 +6,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
   OWNER: jcansdale-test-myorg
   REPOSITORY_NAME: addProjectNextItem
+  PROJECT_NUMBER: 1
   PROJECT_ID: PN_kwDOBhcP284ABF_v
   CONTENT_ID: I_kwDOHEDEfM5GYPhk
 
@@ -52,3 +53,19 @@ jobs:
                 }
               }
             }' | jq
+
+      - name: List project items
+        run: |
+          gh api graphql \
+            -f query='{
+                organization(login: "${{ env.OWNER }}") {
+                  projectNext(number: ${{ env.PROJECT_NUMBER }})
+                  {
+                    items(first: 100) {
+                      nodes {
+                        id
+                      }        
+                    }
+                  }
+                }
+              }' | jq
