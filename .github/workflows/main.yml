@@ -6,8 +6,8 @@ env:
   GITHUB_TOKEN: ${{ secrets.TOKEN }}
   OWNER: jcansdale-test-myorg
   REPOSITORY_NAME: addProjectNextItem
-  PROJECT_ID: FOO
-  CONTENT_ID: BAR
+  PROJECT_ID: PN_kwDOBhcP284ABF_v
+  CONTENT_ID: I_kwDOHEDEfM5GYPhk
 
 jobs:
   build:
@@ -28,6 +28,7 @@ jobs:
                 }
               }
             }' | jq
+
       - name: List issues
         run: |
           gh api graphql \
@@ -40,6 +41,7 @@ jobs:
                 }
               }
             }' | jq
+
       - name: Add item
         run: |
           gh api graphql \
